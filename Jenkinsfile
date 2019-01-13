@@ -43,5 +43,26 @@ pipeline{
                 sh "ssh root@68.183.26.92 systemctl enable httpd"
             }
         }
+        stage("Ask input from user for Prod"){
+            steps{
+                input 'Would you like to proceed to Prod?'
+            }
+        }
+        stage("Install requirements for Prod"){
+            steps{
+                sh "ssh root@142.93.243.140 yum install httpd -y" 
+            }
+        }
+        stage("Move index.html for Prod"){
+            steps{
+                sh "scp ${workspace}/index.html root@142.93.243.140:/var/www/html/"
+            }
+        }
+        stage("Start webserver for Prod"){
+            steps{
+                sh "ssh root@142.93.243.140 systemctl start httpd"
+                sh "ssh root@142.93.243.140 systemctl enable httpd"
+            }
+        }
     }
 }
